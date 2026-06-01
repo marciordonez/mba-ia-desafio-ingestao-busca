@@ -7,7 +7,12 @@ def main():
         print("Não foi possível iniciar o chat. Verifique os erros de inicialização.")
         return
     
-    pass
+    pergunta = input("Digite sua pergunta: ")
+
+    resposta = search_prompt(pergunta)
+
+    print("\nResposta:")
+    print(resposta)
 
 if __name__ == "__main__":
     main()
