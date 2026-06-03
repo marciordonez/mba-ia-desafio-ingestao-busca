@@ -5,7 +5,8 @@ from dotenv import load_dotenv
 
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
+# from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_core.documents import Document
 from langchain_postgres import PGVector
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -15,7 +16,7 @@ load_dotenv()
 PDF_PATH = os.getenv("PDF_PATH")
 
 def ingest_pdf():
-    for k in ("GOOGLE_API_KEY", "DATABASE_URL", "PG_VECTOR_COLLECTION_NAME"):
+    for k in ("OPENAI_API_KEY", "DATABASE_URL", "PG_VECTOR_COLLECTION_NAME"):
         if not os.getenv(k):
             raise RuntimeError(f"Environment variable {k} is not set")
 
@@ -40,9 +41,9 @@ def ingest_pdf():
 
     ids = [f"doc-{i}" for i in range(len(enriched))]
 
-    # embeddings = GoogleGenerativeAIEmbeddings(model=os.getenv("GOOGLE_EMBEDDING_MODEL", "models/embedding-001"))
-
-    embeddings = HuggingFaceEmbeddings(model_name=os.getenv("HUGGINGFACE_EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"))
+    embeddings = OpenAIEmbeddings(model=os.getenv("OPENAI_EMBEDDING_MODEL","text-embedding-3-small"))
+    # embeddings = GoogleGenerativeAIEmbeddings(model=os.getenv("GOOGLE_EMBEDDING_MODEL", "gemini-embedding-001"))
+    # embeddings = HuggingFaceEmbeddings(model_name=os.getenv("HUGGINGFACE_EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"))
 
     store = PGVector(
         embeddings=embeddings,
@@ -53,8 +54,8 @@ def ingest_pdf():
 
     store.add_documents(documents=enriched, ids=ids)
 
-    #BATCH_SIZE = 80
-    #for i in range(0, len(enriched), BATCH_SIZE):
+    # BATCH_SIZE = 80
+    # for i in range(0, len(enriched), BATCH_SIZE):
     #    store.add_documents(documents=enriched[i:i + BATCH_SIZE], ids=ids[i:i + BATCH_SIZE])
     #    if i + BATCH_SIZE < len(enriched):
     #        time.sleep(65)

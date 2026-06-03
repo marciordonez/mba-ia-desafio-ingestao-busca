@@ -21,8 +21,8 @@ A aplicação é dividida em dois fluxos principais:
 │   .pdf     │                      │    TextSplitter       │
 └────────────┘                      │  (chunk 1000 / 150)  │
                                     └──────────┬───────────┘
-                                               │ HuggingFace Embeddings
-                                               │ all-MiniLM-L6-v2
+                                               │ OpenAI Embeddings
+                                               │ text-embedding-3-small
                                                ▼
                                     ┌──────────────────────┐
                                     │  PostgreSQL + pgvector│
@@ -35,8 +35,8 @@ A aplicação é dividida em dois fluxos principais:
                                                ▼
                                     ┌──────────────────────┐
                                     │  Prompt Template     │
-                                    │  + Google Gemini     │
-                                    │  (gemini-2.5-flash)  │
+                                    │  + OpenAI ChatGPT    │
+                                    │  (gpt-5-nano)        │
                                     └──────────────────────┘
                                                │
                                                ▼
@@ -48,9 +48,9 @@ A aplicação é dividida em dois fluxos principais:
 ## Tecnologias
 
 - **LangChain** — orquestração do pipeline RAG
-- **HuggingFace Sentence Transformers** (`all-MiniLM-L6-v2`) — geração de embeddings local
+- **OpenAI Embeddings** (`text-embedding-3-small`) — geração de embeddings via API
 - **PostgreSQL + pgvector** — armazenamento e busca vetorial
-- **Google Gemini** (`gemini-2.5-flash-lite`) — geração de resposta em linguagem natural
+- **OpenAI ChatGPT** (`gpt-5-nano`) — geração de resposta em linguagem natural
 - **Docker / Docker Compose** — provisionamento do banco de dados
 
 ---
@@ -59,7 +59,7 @@ A aplicação é dividida em dois fluxos principais:
 
 - Python 3.11+
 - Docker e Docker Compose
-- Chave de API do Google AI Studio (`GOOGLE_API_KEY`)
+- Chave de API da OpenAI (`OPENAI_API_KEY`)
 
 ---
 
@@ -90,9 +90,9 @@ cp .env.example .env
 
 | Variável | Descrição |
 |----------|-----------|
-| `GOOGLE_API_KEY` | Chave da API do Google AI Studio |
-| `GOOGLE_CHAT_MODEL` | Modelo de chat (padrão: `gemini-2.5-flash-lite`) |
-| `HUGGINGFACE_EMBEDDING_MODEL` | Modelo de embeddings (padrão: `sentence-transformers/all-MiniLM-L6-v2`) |
+| `OPENAI_API_KEY` | Chave da API da OpenAI |
+| `OPENAI_CHAT_MODEL` | Modelo de chat (padrão: `gpt-5-nano`) |
+| `OPENAI_EMBEDDING_MODEL` | Modelo de embeddings (padrão: `text-embedding-3-small`) |
 | `DATABASE_URL` | URL de conexão com o PostgreSQL |
 | `PG_VECTOR_COLLECTION_NAME` | Nome da coleção no pgvector (padrão: `pdf_collection`) |
 | `PDF_PATH` | Caminho absoluto para o arquivo PDF a ser ingerido |
@@ -133,14 +133,8 @@ Digite uma pergunta e pressione Enter. O sistema irá:
 1. Transformar a pergunta em vetor de embedding
 2. Recuperar os 10 chunks mais similares do banco
 3. Montar um prompt com o contexto recuperado
-4. Enviar ao Google Gemini e exibir a resposta
+4. Enviar ao OpenAI ChatGPT e exibir a resposta
 
 > O modelo responde **somente com base no conteúdo do documento**. Caso a informação não esteja presente, ele retorna: *"Não tenho informações necessárias para responder sua pergunta."*
 
 ---
-
-## Evidências
-
-| Ingestão concluída | Busca respondida |
-|:-----------------:|:----------------:|
-| ![Evidência 01](evidencia01.png) | ![Evidência 02](evidencia02.png) |
