@@ -120,7 +120,7 @@ python src/ingest.py
 O script irá:
 1. Carregar o PDF indicado em `PDF_PATH`
 2. Dividir em chunks de 1 000 caracteres com sobreposição de 150
-3. Gerar embeddings com o modelo HuggingFace configurado
+3. Gerar embeddings com o modelo OpenAI configurado
 4. Persistir os vetores no PostgreSQL via `PGVector`
 
 ### Passo 2 — Chat com o documento
